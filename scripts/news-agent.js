@@ -21,7 +21,7 @@ async function main() {
     console.log(`✅ Found ${articles.length} articles to process\n`);
     
     // Initialize AI model
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash-latest' });
     
     // Process each article
     for (let i = 0; i < articles.length; i++) {

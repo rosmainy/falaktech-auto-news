@@ -1,0 +1,35 @@
+name: Auto Update Falak News
+
+on:
+  schedule:
+    # Run every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch: # Manual trigger button
+
+jobs:
+  update-news:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Run AI News Agent
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: node scripts/news-agent.js
+      
+      - name: Commit new articles
+        run: |
+          git config user.name 'FalakTech Bot'
+          git config user.email 'bot@falaktech.my'
+          git add .
+          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Auto: New articles $(date +'%d/%m/%Y %H:%M')" && git push)

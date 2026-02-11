@@ -1,35 +1,47 @@
-name: Auto Update Falak News
+name: FalakTech Multi-Source News Fetcher
 
 on:
   schedule:
-    # Run every 6 hours
-    - cron: '0 */6 * * *'
-  workflow_dispatch: # Manual trigger button
+    - cron: '0 */6 * * *'  # Every 6 hours
+  workflow_dispatch:  # Manual trigger
 
 jobs:
   update-news:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
       
       - name: Install dependencies
-        run: npm install
+        run: |
+          npm install rss-parser@latest
+          npm install @google/generative-ai@latest
       
-      - name: Run AI News Agent
+      - name: Create news directory
+        run: mkdir -p news
+      
+      - name: Run Multi-Source News Agent
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: node scripts/news-agent.js
+        run: node scripts/fetch-news.js
       
-      - name: Commit new articles
+      - name: Commit and push new articles
         run: |
-          git config user.name 'FalakTech Bot'
-          git config user.email 'bot@falaktech.my'
-          git add .
-          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Auto: New articles $(date +'%d/%m/%Y %H:%M')" && git push)
+          git config --local user.name 'FalakTech Bot'
+          git config --local user.email 'bot@falaktech.my'
+          git add news/
+          if git diff --staged --quiet; then
+            echo "No new articles to commit"
+          else
+            git commit -m "🚀 Auto-update: $(date +'%Y-%m-%d %H:%M UTC')"
+            git push
+          fi)

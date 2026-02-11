@@ -1,47 +1,45 @@
-name: FalakTech Multi-Source News Fetcher
+name: FalakTech Daily News Update
 
 on:
   schedule:
-    - cron: '0 */6 * * *'  # Every 6 hours
-  workflow_dispatch:  # Manual trigger
+    # Run daily at 9 AM Malaysia Time (1 AM UTC)
+    - cron: '0 1 * * *'
+  
+  # Manual trigger for testing
+  workflow_dispatch:
 
 jobs:
-  update-news:
+  fetch-news:
     runs-on: ubuntu-latest
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: '18'
       
       - name: Install dependencies
-        run: |
-          npm install rss-parser@latest
-          npm install @google/generative-ai@latest
+        run: npm install
       
-      - name: Create news directory
-        run: mkdir -p news
-      
-      - name: Run Multi-Source News Agent
+      - name: Fetch and translate news
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: node scripts/fetch-news.js
       
-      - name: Commit and push new articles
+      - name: Commit and push changes
         run: |
-          git config --local user.name 'FalakTech Bot'
-          git config --local user.email 'bot@falaktech.my'
-          git add news/
-          if git diff --staged --quiet; then
-            echo "No new articles to commit"
-          else
-            git commit -m "🚀 Auto-update: $(date +'%Y-%m-%d %H:%M UTC')"
+          git config --local user.email "bot@falaktech.my"
+          git config --local user.name "FalakTech Bot"
+          
+          if [[ `git status --porcelain` ]]; then
+            git add news/*.md
+            git commit -m "🤖 Daily News: $(date +'%Y-%m-%d') - 6 fresh articles"
             git push
-          fi)
+          else
+            echo "No new articles today"
+          fi

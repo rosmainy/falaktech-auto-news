@@ -104,7 +104,6 @@ Return exactly this format:
         const result = await model.generateContent(prompt);
         const response = result.response.text();
         
-        // Extract JSON from response
         const jsonMatch = response.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
             return JSON.parse(jsonMatch[0]);
@@ -113,7 +112,6 @@ Return exactly this format:
         console.error('   ⚠️ Translation error:', error.message);
     }
     
-    // Fallback: No translation (English only)
     return {
         title_en: article.title.substring(0, 80),
         title_ms: article.title.substring(0, 80),
@@ -195,7 +193,7 @@ async function main() {
     console.log('🚀 FalakTech News Fetcher v3.0 - Landing Page Edition');
     console.log('📊 Strategy: Keep 6 fresh articles daily\n');
     
-    // 🗑️ DELETE ALL old articles (keep website clean)
+    // DELETE ALL old articles (keep website clean)
     cleanAllOldArticles();
     
     const existingTitles = [];
@@ -211,12 +209,10 @@ async function main() {
             for (const item of feed.items) {
                 if (saved >= source.limit) break;
                 
-                // Filter for specific keywords (Islamic category)
                 if (!isRelevant(item, source)) {
                     continue;
                 }
                 
-                // Check duplicates
                 if (isDuplicate(item.title, existingTitles)) {
                     console.log(`   ⏭️ Duplicate: ${item.title.substring(0, 40)}...`);
                     continue;
@@ -231,10 +227,7 @@ async function main() {
                 
                 console.log(`   📝 Processing: ${item.title.substring(0, 50)}...`);
                 
-                // Translate
                 const translated = await translateArticle(article, source.category);
-                
-                // Save
                 const savedTitle = saveArticle(article, translated, source, source.category);
                 
                 if (savedTitle) {
@@ -243,8 +236,7 @@ async function main() {
                     total++;
                 }
                 
-                // Delay between articles (avoid rate limit)
-                await new Promise(r => setTimeout(r, 2000)); // 2 seconds
+                await new Promise(r => setTimeout(r, 2000));
             }
             
             console.log(`   ✅ Saved ${saved}/${source.limit} from ${source.name}\n`);
@@ -253,8 +245,7 @@ async function main() {
             console.error(`   ❌ Error fetching ${source.name}: ${error.message}\n`);
         }
         
-        // Delay between sources
-        await new Promise(r => setTimeout(r, 3000)); // 3 seconds
+        await new Promise(r => setTimeout(r, 3000));
     }
     
     console.log(`\n🎉 Total saved: ${total} articles`);

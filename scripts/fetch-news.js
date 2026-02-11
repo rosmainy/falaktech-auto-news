@@ -63,7 +63,7 @@ function generateSlug(title) {
 }
 
 async function translateArticle(article, category) {
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const model = genAI.getGenerativeModel({ model: 'models/gemini-2.0-flash' });
     
     const prompt = `Translate this news article. Return ONLY valid JSON, nothing else.
 

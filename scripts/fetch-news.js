@@ -134,6 +134,25 @@ ${translated.summary_ms}
 async function main() {
     console.log('🚀 FalakTech News Fetcher v2.0\n');
     
+    // 🗑️ AUTO-CLEAN: Delete old articles before fetching new ones
+    const newsDir = 'news';
+    if (fs.existsSync(newsDir)) {
+        const files = fs.readdirSync(newsDir);
+        let cleaned = 0;
+        
+        files.forEach(file => {
+            if (file.endsWith('.md') && file !== '.gitkeep') {
+                fs.unlinkSync(path.join(newsDir, file));
+                cleaned++;
+            }
+        });
+        
+        if (cleaned > 0) {
+            console.log(`🗑️ Cleaned ${cleaned} old articles\n`);
+        }
+    }
+    
+    // Create news directory if not exists
     if (!fs.existsSync('news')) {
         fs.mkdirSync('news', { recursive: true });
     }

@@ -1,0 +1,28 @@
+﻿name: Telegram Daily Post
+
+on:
+  schedule:
+    # Run at 9:30 AM MYT (30 mins after news fetch)
+    - cron: '30 1 * * *'
+  
+  # Manual trigger for testing
+  workflow_dispatch:
+
+jobs:
+  post-to-telegram:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Post to Telegram
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+        run: node scripts/post-to-telegram.js

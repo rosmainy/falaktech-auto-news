@@ -1,0 +1,15 @@
+---
+title_en: "Cyclone Rains Spur Papua New Guinea Landslides"
+title_ms: "Cyclone Rains Spur Papua New Guinea Landslides"
+date: "2026-05-01"
+source: "NASA"
+category: "astronomy"
+image: ""
+link: "https://science.nasa.gov/earth/earth-observatory/cyclone-rains-spur-papua-new-guinea-landslides/"
+---
+
+Heavy rains from Tropical Cyclone Maila triggered a deadly landslide in the mountains of East New Britain.
+
+---
+
+Heavy rains from Tropical Cyclone Maila triggered a deadly landslide in the mountains of East New Britain.
